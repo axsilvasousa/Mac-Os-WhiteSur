@@ -1,7 +1,8 @@
-# WhiteSur Custom — tema GTK/Shell + ícones
+# WhiteSur Custom — tema GTK/Shell + ícones + dock
 
-Pacote pessoal do [WhiteSur GTK Theme](https://github.com/vinceliuice/WhiteSur-gtk-theme)
-e do [WhiteSur Icon Theme](https://github.com/vinceliuice/WhiteSur-icon-theme)
+Pacote pessoal do [WhiteSur GTK Theme](https://github.com/vinceliuice/WhiteSur-gtk-theme),
+do [WhiteSur Icon Theme](https://github.com/vinceliuice/WhiteSur-icon-theme) e da
+extensão [MacOS Dock](https://github.com/vinnytherobot/MacOSDock)
 com ajustes de **legibilidade da busca**, **arredondamento dos painéis** e
 **alinhamento visual** com as janelas de aplicativos.
 
@@ -21,7 +22,8 @@ O script instala, em sequência:
 
 1. O tema GTK/Shell (variantes Dark e Light, `normal` e `solid`);
 2. O tema de ícones (`WhiteSur`, `WhiteSur-dark` e `WhiteSur-light`);
-3. Os raios dos menus do **Blur my Shell**, se a extensão estiver instalada.
+3. A extensão **MacOS Dock**, já com as correções deste pacote;
+4. Os raios dos menus do **Blur my Shell**, se a extensão estiver instalada.
 
 Ao terminar, selecione o tema e os ícones em **Ajustes → Aparência**.
 
@@ -29,20 +31,37 @@ Ao terminar, selecione o tema e os ícones em **Ajustes → Aparência**.
 
 | Comando | O que faz |
 |---|---|
-| `./install.sh` | Instala tema + ícones |
+| `./install.sh` | Instala tema + ícones + dock |
 | `./install.sh --theme` | Instala apenas o tema GTK/Shell |
 | `./install.sh --icons` | Instala apenas os ícones |
-| `./install.sh --uninstall` | Remove tema e ícones |
+| `./install.sh --dock` | Instala apenas a extensão MacOS Dock |
+| `./install.sh --uninstall` | Remove tema, ícones e dock |
 | `./install.sh --help` | Mostra a ajuda |
 
 ### Requisitos
 
 - `sassc` — compila o tema (o instalador tenta instalar automaticamente);
 - `glib-compile-resources` — parte do `glib2.0`;
+- `glib-compile-schemas` — compila o schema da dock (parte do `glib2.0`);
 - GNOME Shell 46+ (testado em Zorin OS 18.1, GNOME Shell 46.0, Wayland).
 
 > Se `sassc` não estiver disponível e a instalação automática falhar:
 > `sudo apt install sassc`
+
+### Sobre a extensão MacOS Dock
+
+A dock **não precisa ser baixada separadamente**. O repositório inclui o build
+já corrigido em `macos-dock-extension/`, então `./install.sh` a instala
+pronta. Versão base: **18** (a mesma da extensions.gnome.org).
+
+Se você já tem a extensão instalada da loja, o instalador **substitui** pelos
+arquivos corrigidos, mas **preserva suas preferências** (posição, tamanho de
+ícone, opacidade, apps favoritos) — elas ficam no `dconf`, não na pasta da
+extensão.
+
+> **Atenção:** ao atualizar a dock pela extensions.gnome.org, os arquivos
+> corrigidos serão substituídos pela versão oficial e os dois ajustes abaixo
+> serão perdidos. Rode `./install.sh --dock` novamente para reaplicá-los.
 
 ---
 
@@ -130,27 +149,103 @@ Para trocar, edite `THEME_FLAGS` no `install.sh`:
 THEME_FLAGS=(-N mojave)   # opções: stable, normal, mojave, glassy, right
 ```
 
+### 5. Extensão MacOS Dock
+
+Dois ajustes na extensão, ambos feitos **no código-fonte TypeScript** do
+projeto e recompilados — não é CSS improvisado.
+
+#### 5.1 Espaçamento vertical simétrico
+
+**Problema:** embora o container declarasse `padding: 4px 10px` (4px em cima e
+4px embaixo), cada ícone tinha altura fixa de `48 + 12 + 4 = 64px`, enquanto o
+conteúdo real ocupa apenas 54px (ícone 48 + 6 da linha de pontinhos). Os 10px
+que sobravam eram empacotados **no fim** do slot.
+
+Resultado medido na tela: **7px** de vão acima do ícone contra **14px** abaixo.
+
+**Correção:** a altura do slot passou a ser calculada pelo conteúdo real.
+
+```js
+_getIconActorHeight() {
+    return this._iconSize + (this._runningIndicatorsEnabled ? 6 : 0);
+}
+```
+
+A altura da barra caiu de 72px para **62px**, com os vãos agora simétricos
+(4px/4px). Se os indicadores de apps rodando forem desativados, a altura
+acompanha automaticamente (48px), sem espaço morto.
+
+Arquivos: `lib/iconManager.js` (3 pontos) e `lib/dockManager.js` (`_dockHeight`).
+
+#### 5.2 Botão de aplicações sem magnificação
+
+**Problema:** o primeiro ícone (grade de aplicações) crescia junto com os
+demais ao passar o mouse, o que deslocava a fileira inteira e descaracterizava
+um lançador fixo.
+
+**Correção:** slots com a classe `macos-dock-app-button` ficam travados em
+escala 1.0, mas **continuam** reagindo a hover, tooltip e clique.
+
+```js
+const NO_MAGNIFICATION_STYLE_CLASSES = ["macos-dock-app-button"];
+
+_canMagnify(actor) {
+    return !NO_MAGNIFICATION_STYLE_CLASSES.some(styleClass =>
+        actor.has_style_class_name(styleClass)
+    );
+}
+```
+
+A identificação é **por classe de estilo, não por posição** — então funciona
+mesmo se você mover o botão de aplicações para o fim da dock
+(`show-applications-button-position`).
+
+Arquivo: `lib/magnification.js`.
+
+#### Como reaplicar após atualizar a dock
+
+Os dois ajustes estão em `macos-dock-extension/` (build pronto) e o diff
+original em `macos-dock-extension/patches.patch`. Basta:
+
+```bash
+./install.sh --dock
+```
+
+Isso substitui os arquivos da extensão pela versão corrigida, mantendo suas
+preferências.
+
+Para atualizar o patch no futuro, veja `macos-dock-extension/README.md`.
+
 ---
 
 ## Estrutura do repositório
 
 ```
 WhiteSur-custom/
-├── install.sh          # instalador único (tema + ícones + Blur)
-├── README.md           # este arquivo
-├── gtk-theme/          # WhiteSur GTK Theme (com os ajustes)
+├── install.sh                 # instalador único (tema + ícones + dock + Blur)
+├── README.md                  # este arquivo
+├── gtk-theme/                 # WhiteSur GTK Theme (com os ajustes)
 │   ├── install.sh
 │   ├── libs/
 │   ├── src/
 │   └── other/
-└── icon-theme/         # WhiteSur Icon Theme
-    ├── install.sh
-    ├── src/
-    ├── colors/
-    ├── links/
-    ├── bold/
-    ├── alternative/
-    └── plasma/
+├── icon-theme/                # WhiteSur Icon Theme
+│   ├── install.sh
+│   ├── src/
+│   ├── colors/
+│   ├── links/
+│   ├── bold/
+│   ├── alternative/
+│   └── plasma/
+└── macos-dock-extension/      # extensão MacOS Dock (build corrigido)
+    ├── README.md              # como surgiu o patch e como atualizá-lo
+    ├── patches.patch          # diff contra o upstream
+    ├── metadata.json
+    ├── extension.js
+    ├── prefs.js
+    ├── stylesheet.css
+    ├── lib/
+    └── schemas/
 ```
 
 Cada subpasta mantém o `install.sh` original do projeto, então é possível usá-las

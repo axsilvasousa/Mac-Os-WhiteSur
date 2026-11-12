@@ -1,0 +1,111 @@
+diff --git a/src/lib/dockManager.ts b/src/lib/dockManager.ts
+index 6ccf304..370b696 100644
+--- a/src/lib/dockManager.ts
++++ b/src/lib/dockManager.ts
+@@ -46,8 +46,11 @@ export class DockManager {
+ 
+   private get _dockHeight(): number {
+     const iconSize = this._settings?.get_int("icon-size") ?? 48;
+-    const iconActorHeight = iconSize + 16;
+-    const verticalPadding = 8; // 4px top + 4px bottom from _applyDockStyle
++    // Icons occupy the icon itself plus the running-indicator row; the 8px
++    // here is the 4px top + 4px bottom padding from _applyDockStyle.
++    const indicatorRow = this._settings?.get_boolean("running-indicators") ? 6 : 0;
++    const iconActorHeight = iconSize + indicatorRow;
++    const verticalPadding = 8;
+     return iconActorHeight + verticalPadding;
+   }
+ 
+diff --git a/src/lib/iconManager.ts b/src/lib/iconManager.ts
+index 1860638..ad4d310 100644
+--- a/src/lib/iconManager.ts
++++ b/src/lib/iconManager.ts
+@@ -188,7 +188,7 @@ export class IconManager {
+     if (this._appButton && this._appButtonIcon) {
+       this._appButtonIcon.set_icon_size(this._iconSize);
+       const padded = this._iconSize + 12;
+-      this._appButton.set_size(padded, padded + 4);
++      this._appButton.set_size(padded, this._getIconActorHeight());
+     }
+   }
+ 
+@@ -252,6 +252,8 @@ export class IconManager {
+     for (const [appId, actor] of this._icons.entries()) {
+       this._refreshRunningIndicator(actor, appId);
+     }
++    // The indicator row is part of the slot height, so the dock must resize.
++    if (this._onIconsChanged) this._onIconsChanged();
+   }
+ 
+   setShowAppButton(show: boolean): void {
+@@ -735,7 +737,18 @@ export class IconManager {
+       }
+     }
+     const padded = this._iconSize + 12;
+-    actor.set_size(padded, padded + 4);
++    actor.set_size(padded, this._getIconActorHeight());
++  }
++
++  /**
++   * Height of an icon slot. Only the icon plus the running-indicator row is
++   * counted, so the dock's vertical padding stays visually symmetric. The
++   * previous value added a fixed 4px tail that had no content, which was
++   * packed at the bottom and made the gap under the icons larger than the one
++   * above them.
++   */
++  private _getIconActorHeight(): number {
++    return this._iconSize + (this._runningIndicatorsEnabled ? 6 : 0);
+   }
+ 
+   private _positionMediaIndicator(indicator: InstanceType<typeof St.Widget>): void {
+@@ -1464,7 +1477,7 @@ export class IconManager {
+       x_align: Clutter.ActorAlign.CENTER,
+       y_align: Clutter.ActorAlign.FILL,
+       width: padded,
+-      height: padded + 4,
++      height: this._getIconActorHeight(),
+     });
+     this._appButton = appButton;
+ 
+diff --git a/src/lib/magnification.ts b/src/lib/magnification.ts
+index 586713d..2568fc5 100644
+--- a/src/lib/magnification.ts
++++ b/src/lib/magnification.ts
+@@ -6,6 +6,9 @@ type IconActor = InstanceType<typeof St.BoxLayout>;
+ 
+ const MIN_SCALE = 1.0;
+ const LERP_FACTOR = 0.25; // smoothing factor per tick
++// Slots that never magnify. The applications button keeps its size so it
++// behaves like a fixed launcher: only its tooltip reacts to the pointer.
++const NO_MAGNIFICATION_STYLE_CLASSES = ["macos-dock-app-button"];
+ 
+ export class Magnification {
+   private _signals: SignalManager;
+@@ -175,7 +178,9 @@ export class Magnification {
+ 
+       const t = Math.max(0, 1 - dist / this._falloffDistance);
+       const smooth = t * t * (3 - 2 * t);
+-      const target = MIN_SCALE + (this._maxScale - MIN_SCALE) * smooth;
++      const target = this._canMagnify(children[i])
++        ? MIN_SCALE + (this._maxScale - MIN_SCALE) * smooth
++        : MIN_SCALE;
+ 
+       // Lerp towards target.
+       const prev = this._currentScales[i] ?? MIN_SCALE;
+@@ -187,6 +192,16 @@ export class Magnification {
+     }
+   }
+ 
++  /**
++   * Slots such as the applications button stay at their natural size while
++   * still taking part in hover, tooltips and click handling.
++   */
++  private _canMagnify(actor: IconActor): boolean {
++    return !NO_MAGNIFICATION_STYLE_CLASSES.some(styleClass =>
++      actor.has_style_class_name(styleClass)
++    );
++  }
++
+   private _resetAll(): void {
+     if (this._paused) return;
+     const children = this._container.get_children() as IconActor[];
