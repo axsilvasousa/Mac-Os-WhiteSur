@@ -6,6 +6,10 @@
   transition-duration: 0;
   text-align: center;
   background-color: transparent;
+  // St inherits text-shadow into child labels. Base themes such as Zorin's
+  // declare a light shadow on these items, which turns into a grey halo over
+  // our dark panel, so it must be reset explicitly here.
+  text-shadow: none;
 
   &:focus,
   &:hover,

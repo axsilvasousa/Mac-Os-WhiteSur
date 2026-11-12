@@ -16,6 +16,8 @@
     border: 1px solid transparent;
     background-color: transparent;
     color: $fg_color;
+    // Base themes with light shadows leak into the labels (Alt+Tab).
+    text-shadow: none;
 
     &:outlined {
       background-color: $divider_color;

@@ -21,6 +21,9 @@ $app_folder_size: 720px;
 .overview-tile {
   color: $light_alt_fg_color;
   background-color: transparent;
+  // Base themes (e.g. Zorin's) add a light text-shadow here; it bleeds into
+  // the labels and shows as a grey halo. Reset it on the tile itself.
+  text-shadow: none;
 
   &:focus { color: $light_fg_color; background-color: $light_divider_color; }
   &:hover { color: $light_fg_color; background-color: $light_divider_color; }
@@ -63,6 +66,8 @@ $app_folder_size: 720px;
 
 .app-folder {
   background-color: $light_divider_color;
+  // Same base-theme shadow leak as .overview-tile.
+  text-shadow: none;
 
   &:focus { background-color: $light_divider_color; }
   &:hover { background-color: rgba(white, 0.2); }
