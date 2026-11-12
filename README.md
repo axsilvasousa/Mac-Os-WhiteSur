@@ -94,6 +94,39 @@ quase nulo. A caixa de digitação tinha o mesmo problema.
 
 Arquivos: `_search-results.scss`, `_search-entry.scss`, `_drawing.scss`.
 
+#### Sombra de texto vazada do tema base (Zorin)
+
+**Problema:** mesmo com o painel escuro, os rótulos continuavam com um halo
+cinza. A origem não era o WhiteSur: o tema base do modo Zorin
+(`ZorinGrey-Light/gnome-shell-theme.gresource`) declara
+
+```css
+text-shadow: 0px 1.5px 3px rgba(238, 238, 238, 0.5);
+```
+
+em `.list-search-result`, `.overview-tile`, `.app-folder` e
+`.switcher-list .item-box`. Como o WhiteSur não declarava `text-shadow` nesses
+seletores, o valor do tema base **vazava** — e o St propaga a sombra para os
+labels filhos.
+
+Isso explica um detalhe que ajudou a diagnosticar: no **hover a sombra sumia**,
+porque o próprio Zorin zera `text-shadow` no `:hover`/`:selected`.
+
+**Correção:** `text-shadow: none` explícito em:
+
+| Seletor | Onde aparece |
+|---|---|
+| `%search-section-content-item` | resultados da busca |
+| `.overview-tile` | ícones da grade de apps |
+| `.app-folder` | pastas de apps |
+| `.switcher-list .item-box` | Alt+Tab |
+
+Arquivos: `_search-results.scss`, `widgets-46-0/_app-grid.scss`,
+`_switcher-popup.scss`.
+
+> Isso só afeta ambientes cujo tema base define sombra de texto (Zorin, por
+> exemplo). Em GNOME puro o `none` é inofensivo.
+
 ### 2. Raio e padding dos painéis da barra superior
 
 **Problema:** o menu rápido e os menus da barra (relógio, indicadores como o
