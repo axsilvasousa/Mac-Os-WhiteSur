@@ -80,7 +80,7 @@ quase nulo. A caixa de digitação tinha o mesmo problema.
 
 | Elemento | Antes | Depois |
 |---|---|---|
-| Painel de resultados | branco 10% | **preto 55%** + borda branca 10% + sombra |
+| Painel de resultados | branco 10% | **preto 55%** + borda branca 10% + sombra de painel (sem sombra no texto) |
 | Texto dos resultados | branco 85% | **branco 100%** |
 | Descrição do resultado | branco 85% | **branco 80%** |
 | Rótulo do provedor | branco 50% | **branco 75%** |
