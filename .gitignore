@@ -1,0 +1,17 @@
+# Artefatos gerados pelo build (regerados pelo instalador)
+gtk-theme/src/main/gtk-3.0/gtk*.css
+gtk-theme/src/main/gtk-4.0/gtk*.css
+gtk-theme/src/main/cinnamon/cinnamon*.css
+gtk-theme/src/main/gnome-shell/gnome-shell-Dark.css
+gtk-theme/src/main/gnome-shell/gnome-shell-Light.css
+gtk-theme/other/gdm/gnome-shell-theme.gresource
+gtk-theme/src/other/dash-to-dock/stylesheet.css
+gtk-theme/src/other/dash-to-dock/stylesheet-dark.css
+
+# Temporários do build
+gtk-theme/src/sass/*-temp.scss
+*.css.map
+.sass-cache
+
+# Sistema
+.DS_Store
