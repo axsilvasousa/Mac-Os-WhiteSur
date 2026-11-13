@@ -36,7 +36,6 @@ Don't worry, WhiteSur installer already provides all of those dependencies.
 
 - [user-themes](https://extensions.gnome.org/extension/19/user-themes/) to enable gnome-shell theme (and not just the application theme)
 - [dash-to-dock](https://extensions.gnome.org/extension/307/dash-to-dock)
-- [blur-my-shell](https://extensions.gnome.org/extension/3193/blur-my-shell)
 
 </details>
 

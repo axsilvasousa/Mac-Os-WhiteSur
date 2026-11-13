@@ -1,0 +1,9 @@
+{
+  "uuid": "super-app-grid@whitesur.local",
+  "name": "Super abre a grade de aplicativos",
+  "description": "Faz a tecla Super abrir a lista de aplicativos (grade) em vez das Atividades. Também pode trocar o clique no botão Atividades do painel superior.",
+  "shell-version": ["46", "47", "48"],
+  "settings-schema": "org.gnome.shell.extensions.super-app-grid",
+  "gettext-domain": "super-app-grid",
+  "version": 1
+}

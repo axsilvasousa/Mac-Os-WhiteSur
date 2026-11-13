@@ -19,6 +19,7 @@ Usage:  `./install.sh`  **[OPTIONS...]**
 |-n, --name           | Specify theme name (Default: WhiteSur)|
 |-t, --theme          | Specify theme color variant(s) [default/purple/pink/red/orange/yellow/green/grey/all] (Default: blue)|
 |-a, --alternative    | Install alternative icons (redesigned MacOS default icons)|
+|-A, --alternative-apps | Install alternative icons for apps only (keeps the macOS-style folder/places icons)|
 |-b, --bold           | Install bold panel icons version|
 | -p, --kde-plasma    | Replace Apple logo with KDE Plasma logo|
 |-r,--remove,-u,--uninstall | Uninstall (remove) icon themes|

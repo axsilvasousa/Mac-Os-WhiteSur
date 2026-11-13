@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="super-app-grid">
+  <schema id="org.gnome.shell.extensions.super-app-grid"
+          path="/org/gnome/shell/extensions/super-app-grid/">
+    <key name="override-activities-button" type="b">
+      <default>true</default>
+      <summary>Trocar também o botão Atividades do painel</summary>
+      <description>Quando verdadeiro, clicar no botão "Atividades" do painel superior abre a grade de aplicativos, em vez das Atividades. A tecla Super é sempre trocada.</description>
+    </key>
+  </schema>
+</schemalist>
