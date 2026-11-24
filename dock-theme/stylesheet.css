@@ -1,0 +1,206 @@
+/* ==========================================================================
+   WhiteSur Custom — tema macOS para a dock nativa do Zorin OS
+   ==========================================================================
+
+   Copyright (c) 2026 WhiteSur Custom contributors
+   Copyright (c) 2026 vinnytherobot (MacOS Dock)
+
+   Obra derivada da extensão MacOS Dock (https://github.com/vinnytherobot/MacOSDock),
+   sob licença MIT. Veja o arquivo LICENSE desta pasta.
+
+   Este arquivo é aplicado por cima do stylesheet.css da extensão da dock
+   nativa do Zorin (Zorin Dash / dash-to-dock), em:
+
+       /usr/share/gnome-shell/extensions/zorin-dash@zorinos.com/stylesheet.css
+
+   O conteúdo abaixo é a tradução do visual da extensão macos-dock-extension
+   (que fica no repositório apenas como referência) para os seletores que a
+   dock nativa realmente usa. As animações de JavaScript ficam no módulo
+   whitesur-magnification.js, aplicado no mesmo local.
+
+   ── Regras de ouro ─────────────────────────────────────────────────────────
+   • O seletor do dash-to-dock tem especificidade alta. Por isso cada regra
+     aqui repete a mesma estrutura de seletores (#dashtodockContainer.dashtodock
+     #dash ...), só que com a classe .dashtodock, para garantir que a nossa
+     regra vença a do upstream.
+   • O St (CSS do GNOME Shell) não aceita box-shadow. A profundidade da dock
+     é feita com borda + gradiente.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Fundo da dock — translúcido, arredondado e "flutuante" (estilo macOS)
+   -------------------------------------------------------------------------- */
+#dashtodockContainer.dashtodock #dash .dash-background {
+  background-color: rgba(38, 38, 43, 0.55);
+  background-gradient-start: rgba(58, 58, 66, 0.62);
+  background-gradient-end: rgba(24, 24, 28, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+}
+
+/* Mesma regra sem a classe .dashtodock, para o caso de a extensão estar
+   com "apply custom theme" desligado. */
+#dashtodockContainer #dash .dash-background {
+  background-color: rgba(38, 38, 43, 0.55);
+  background-gradient-start: rgba(58, 58, 66, 0.62);
+  background-gradient-end: rgba(24, 24, 28, 0.62);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+}
+
+/* Respiro entre a dock e a borda da tela (macOS deixa ~8px) */
+#dashtodockContainer.bottom #dash .dash-background {
+  margin-bottom: 8px;
+}
+
+#dashtodockContainer.top #dash .dash-background {
+  margin-top: 8px;
+}
+
+#dashtodockContainer.left #dash .dash-background {
+  margin-left: 8px;
+}
+
+#dashtodockContainer.right #dash .dash-background {
+  margin-right: 8px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Espaçamento interno — mais compacto que o padrão do GNOME
+   -------------------------------------------------------------------------- */
+#dashtodockContainer.dashtodock.bottom #dash #dashtodockDashContainer {
+  padding: 6px;
+}
+
+#dashtodockContainer.dashtodock.top #dash #dashtodockDashContainer {
+  padding: 6px;
+}
+
+#dashtodockContainer.dashtodock.left #dash #dashtodockDashContainer {
+  padding: 6px;
+}
+
+#dashtodockContainer.dashtodock.right #dash #dashtodockDashContainer {
+  padding: 6px;
+}
+
+/* Espaço entre os ícones (o macOS usa ~6px) */
+#dashtodockContainer.dashtodock.bottom #dash .dash-item-container .app-well-app,
+#dashtodockContainer.dashtodock.bottom #dash .dash-item-container .show-apps {
+  padding: 3px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+#dashtodockContainer.dashtodock.top #dash .dash-item-container .app-well-app,
+#dashtodockContainer.dashtodock.top #dash .dash-item-container .show-apps {
+  padding: 3px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+#dashtodockContainer.dashtodock.left #dash .dash-item-container .app-well-app,
+#dashtodockContainer.dashtodock.left #dash .dash-item-container .show-apps {
+  padding: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+#dashtodockContainer.dashtodock.right #dash .dash-item-container .app-well-app,
+#dashtodockContainer.dashtodock.right #dash .dash-item-container .show-apps {
+  padding: 3px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   3. Ícones — sombra suave, sem o quadrado cinza de hover do GNOME
+   -------------------------------------------------------------------------- */
+#dashtodockContainer .app-well-app StIcon,
+#dashtodockContainer .show-apps StIcon,
+#dashtodockContainer .app-well-app .overview-icon,
+#dashtodockContainer .show-apps .overview-icon {
+  icon-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+
+#dashtodockContainer.dashtodock #dash .dash-item-container .overview-tile:hover .overview-icon,
+#dashtodockContainer.dashtodock #dash .dash-item-container .app-well-app:hover .overview-icon,
+#dashtodockContainer.dashtodock #dash .dash-item-container .show-apps:hover .overview-icon {
+  background-color: rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+}
+
+/* O app em foco não ganha quadrado cinza: no macOS o destaque é o pontinho */
+#dashtodockContainer.dashtodock #dash .dash-item-container .overview-tile.focused .overview-icon,
+#dashtodockContainer.dashtodock #dash .dash-item-container .app-well-app.focused .overview-icon {
+  background-color: transparent;
+}
+
+/* --------------------------------------------------------------------------
+   4. Indicador de app em execução — o "dot" do macOS
+   -------------------------------------------------------------------------- */
+#dashtodockContainer .app-well-app-running-dot,
+#dashtodockContainer .app-well-running-dot,
+#dashtodockContainer .app-grid-running-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. Botão de aplicativos (grade de 9 pontos) — não cresce no hover
+   -------------------------------------------------------------------------- */
+#dashtodockContainer .show-apps {
+  border-radius: 10px;
+}
+
+#dashtodockContainer .show-apps:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   6. Separador (apps | volumes | lixeira)
+   -------------------------------------------------------------------------- */
+#dashtodockContainer.dashtodock #dash .dash-separator {
+  background-color: rgba(255, 255, 255, 0.25);
+  margin: 0 6px;
+}
+
+/* --------------------------------------------------------------------------
+   7. Tooltip — etiqueta flutuante do macOS
+   -------------------------------------------------------------------------- */
+#dashtodockContainer .dash-label {
+  background-color: rgba(30, 30, 30, 0.92);
+  background-gradient-start: rgba(52, 52, 52, 0.92);
+  background-gradient-end: rgba(22, 22, 22, 0.92);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* --------------------------------------------------------------------------
+   8. Prévia de janelas (hover com várias janelas do mesmo app)
+   -------------------------------------------------------------------------- */
+#dashtodockContainer .dashtodock-app-well-preview-menu-item {
+  border-radius: 8px;
+}
+
+#dashtodockContainer .dashtodock-app-well-preview-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.10);
+}
+
+/* --------------------------------------------------------------------------
+   9. Transições — movimento mais "macOS", sem travadas
+   -------------------------------------------------------------------------- */
+#dashtodockContainer.dashtodock #dash .dash-item-container > StButton {
+  transition-duration: 200;
+}
+
+#dashtodockContainer .dash-label {
+  transition-duration: 150;
+}

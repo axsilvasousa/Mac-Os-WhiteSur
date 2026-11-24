@@ -1,10 +1,10 @@
 # WhiteSur Custom — tema GTK/Shell + ícones + dock
 
 Pacote pessoal do [WhiteSur GTK Theme](https://github.com/vinceliuice/WhiteSur-gtk-theme),
-do [WhiteSur Icon Theme](https://github.com/vinceliuice/WhiteSur-icon-theme) e da
-extensão [MacOS Dock](https://github.com/vinnytherobot/MacOSDock)
-com ajustes de **legibilidade da busca**, **arredondamento dos painéis** e
-**alinhamento visual** com as janelas de aplicativos.
+do [WhiteSur Icon Theme](https://github.com/vinceliuice/WhiteSur-icon-theme) e de um
+**tema macOS aplicado na dock nativa do Zorin OS**, com ajustes de
+**legibilidade da busca**, **arredondamento dos painéis** e **alinhamento
+visual** com as janelas de aplicativos.
 
 Tudo se instala com **um comando**.
 
@@ -21,9 +21,12 @@ cd WhiteSur-custom
 O script instala, em sequência:
 
 1. O tema GTK/Shell (variantes Dark e Light, `normal` e `solid`);
-2. O tema de ícones (`WhiteSur`, `WhiteSur-dark` e `WhiteSur-light`);
-3. A extensão **MacOS Dock**, já com as correções deste pacote;
-4. Os raios dos menus do **Blur my Shell**, se a extensão estiver instalada.
+2. O tema de ícones (`WhiteSur`, `WhiteSur-dark` e `WhiteSur-light`), com os
+   **apps na versão alternativa** (`-A`): sem o rosto do Finder no gerenciador
+   de arquivos, mas **mantendo as pastas no estilo macOS**;
+3. O tema macOS **na dock nativa do Zorin OS** (Zorin Dash), com backup do
+   estado original para poder desfazer;
+4. A extensão que faz a tecla **Super** abrir a grade de aplicativos.
 
 Ao terminar, selecione o tema e os ícones em **Ajustes → Aparência**.
 
@@ -31,37 +34,55 @@ Ao terminar, selecione o tema e os ícones em **Ajustes → Aparência**.
 
 | Comando | O que faz |
 |---|---|
-| `./install.sh` | Instala tema + ícones + dock |
+| `./install.sh` | Instala tema + ícones + tema da dock + tecla Super |
 | `./install.sh --theme` | Instala apenas o tema GTK/Shell |
 | `./install.sh --icons` | Instala apenas os ícones |
-| `./install.sh --dock` | Instala apenas a extensão MacOS Dock |
-| `./install.sh --uninstall` | Remove tema, ícones e dock |
+| `./install.sh --dock` | Instala apenas o tema da dock nativa |
+| `./install.sh --super` | Instala apenas a extensão da tecla Super |
+| `./install.sh --uninstall` | Remove tudo o que foi instalado |
 | `./install.sh --help` | Mostra a ajuda |
+
+O instalador do tema GTK/Shell roda sempre na **configuração padrão**
+(Dark/Light × normal/solid) — sem opções de estilo.
 
 ### Requisitos
 
 - `sassc` — compila o tema (o instalador tenta instalar automaticamente);
 - `glib-compile-resources` — parte do `glib2.0`;
-- `glib-compile-schemas` — compila o schema da dock (parte do `glib2.0`);
+- `perl` — usado para conectar a magnificação na extensão da dock;
 - GNOME Shell 46+ (testado em Zorin OS 18.1, GNOME Shell 46.0, Wayland).
 
 > Se `sassc` não estiver disponível e a instalação automática falhar:
 > `sudo apt install sassc`
 
-### Sobre a extensão MacOS Dock
+### Ícones: apps alternativos (`-A`)
 
-A dock **não precisa ser baixada separadamente**. O repositório inclui o build
-já corrigido em `macos-dock-extension/`, então `./install.sh` a instala
-pronta. Versão base: **18** (a mesma da extensions.gnome.org).
+Os ícones são instalados com a flag `-A` (adicionada neste pacote ao instalador
+do WhiteSur). Ela aplica a versão alternativa **somente nos apps**, mantendo as
+pastas no estilo macOS:
 
-Se você já tem a extensão instalada da loja, o instalador **substitui** pelos
-arquivos corrigidos, mas **preserva suas preferências** (posição, tamanho de
-ícone, opacidade, apps favoritos) — elas ficam no `dconf`, não na pasta da
-extensão.
+| Ícone | Padrão | Com `-A` |
+|---|---|---|
+| Gerenciador de arquivos | rosto do **Finder** (dois olhos + sorriso) | pasta genérica |
+| Apps de sistema (terminal, calculadora, calendário, central de software…) | estilo macOS | genéricos |
+| Pastas (`places`: folder, folder-download, folder-code…) | pasta Big Sur | **mantidas (Big Sur)** |
+| Dispositivos e tipos de arquivo (`devices`, `mimes`) | estilo macOS | **mantidos** |
 
-> **Atenção:** ao atualizar a dock pela extensions.gnome.org, os arquivos
-> corrigidos serão substituídos pela versão oficial e os dois ajustes abaixo
-> serão perdidos. Rode `./install.sh --dock` novamente para reaplicá-los.
+Ícones de apps de terceiros (Firefox, Chrome, Spotify…) **não** são alterados.
+
+Comparação com a flag original do upstream:
+
+| Flag | Apps | Pastas | Dispositivos/Mimes |
+|---|---|---|---|
+| *(nenhuma)* | macOS | macOS | macOS |
+| `-A` (este pacote) | genéricos | **macOS** | macOS |
+| `-a` (upstream) | genéricos | genéricos | genéricos |
+
+Para instalar com as pastas genéricas também (comportamento original do `-a`):
+
+```bash
+cd icon-theme && ./install.sh -a
+```
 
 ---
 
@@ -130,8 +151,8 @@ Arquivos: `_search-results.scss`, `widgets-46-0/_app-grid.scss`,
 ### 2. Raio e padding dos painéis da barra superior
 
 **Problema:** o menu rápido e os menus da barra (relógio, indicadores como o
-Ventoy) tinham cantos muito mais arredondados e padding diferente do restante do
-sistema.
+Ventoy) tinham cantos muito mais arredondados e padding diferente do restante
+do sistema.
 
 **Referência adotada:** os popovers das janelas GTK do próprio tema —
 `popover > contents { padding: 6px; border-radius: 12px; }` — e
@@ -151,103 +172,168 @@ Arquivos: `_quick-settings.scss`, `_popovers.scss`, `_calendar.scss`.
 > O padding de 11px do menu rápido é intencional: 6px para manter a
 > concentricidade com os itens internos, mais 5px de respiro extra.
 
-### 3. Blur my Shell
+### 3. Estilo do Nautilus
 
-O Blur my Shell desenha o fundo desfocado desses menus e aplica o arredondamento
-por **estilo inline**, o que sobrepõe o CSS do tema. Por isso o `install.sh`
-também ajusta as chaves da extensão:
+O instalador usa o estilo de sidebar do Nautilus `mojave`, que é o visual
+validado neste pacote. O padrão do projeto upstream é `stable`.
 
-| Chave | Antes | Depois |
-|---|---|---|
-| `quick-settings-corner-radius` | 36 | **12** |
-| `menu-corner-radius` | 20 | **12** |
-| `submenu-corner-radius` | 24 | **12** |
-| `calendar-corner-radius` | 30 | **12** |
-
-Isso é feito via `gsettings` e é ignorado com aviso caso a extensão não exista.
-
-> **Convivência com o Blur my Shell:** estes valores valem enquanto forem esses.
-> Se você abrir as preferências da extensão e mudar os raios, ela voltará a
-> impor os valores próprios e o arredondamento do tema será sobreposto.
-
-### 4. Estilo do Nautilus
-
-O instalador usa `-N mojave` para manter o estilo de sidebar do Nautilus
-(`mojave`), que é o visual em uso neste pacote. O padrão do projeto upstream é
-`stable`.
-
-Para trocar, edite `THEME_FLAGS` no `install.sh`:
+Como o instalador do tema GTK/Shell não tem mais opções, esse valor virou o
+padrão em `gtk-theme/libs/lib-core.sh`:
 
 ```bash
-THEME_FLAGS=(-N mojave)   # opções: stable, normal, mojave, glassy, right
+# Estilo do Nautilus usado e validado neste pacote (o padrão upstream é 'stable')
+nautilus_style="mojave"
 ```
 
-### 5. Extensão MacOS Dock
+### 4. Tema macOS na dock nativa do Zorin OS
 
-Dois ajustes na extensão, ambos feitos **no código-fonte TypeScript** do
-projeto e recompilados — não é CSS improvisado.
+A dock do Zorin OS é a extensão **Zorin Dash** (fork do `dash-to-dock`),
+instalada em `/usr/share/gnome-shell/extensions/zorin-dash@zorinos.com`.
 
-#### 5.1 Espaçamento vertical simétrico
+Este pacote **não substitui mais a dock do sistema**. Ele aplica o visual e as
+animações da antiga extensão `macos-dock-extension` por cima da dock nativa,
+sempre com backup do estado anterior.
 
-**Problema:** embora o container declarasse `padding: 4px 10px` (4px em cima e
-4px embaixo), cada ícone tinha altura fixa de `48 + 12 + 4 = 64px`, enquanto o
-conteúdo real ocupa apenas 54px (ícone 48 + 6 da linha de pontinhos). Os 10px
-que sobravam eram empacotados **no fim** do slot.
+#### 4.1 Visual (CSS)
 
-Resultado medido na tela: **7px** de vão acima do ícone contra **14px** abaixo.
+O CSS foi portado do `macos-dock-extension/stylesheet.css` para os seletores
+que a dock nativa realmente usa:
 
-**Correção:** a altura do slot passou a ser calculada pelo conteúdo real.
+| Visual | Onde é aplicado |
+|---|---|
+| Fundo translúcido, cantos arredondados e borda clara | `.dash-background` |
+| Respiro de 8px entre a dock e a borda da tela | margem do `.dash-background` |
+| Espaçamento compacto entre os ícones (≈6px) | `.dash-item-container` |
+| Ponto de app em execução (4px, branco) | `.app-well-app-running-dot` |
+| Ícones com sombra suave | `StIcon` / `.overview-icon` |
+| Hover discreto, sem o quadrado cinza do GNOME | `.overview-icon:hover` |
+| Botão de aplicativos com hover arredondado | `.show-apps` |
+| Separador translúcido | `.dash-separator` |
+| Tooltip no formato de etiqueta do macOS | `.dash-label` |
+| Prévia de janelas arredondada | `.dashtodock-app-well-preview-menu-item` |
+
+O arquivo é **acrescentado** ao `stylesheet.css` da extensão (entre marcadores),
+e não substitui o original — o layout do dash-to-dock continua intacto.
+
+> O CSS do dash-to-dock usa seletores muito específicos
+> (`#dashtodockContainer.dashtodock #dash .dash-background`), então as regras
+> do WhiteSur repetem a mesma estrutura para vencer o cascateamento.
+
+#### 4.2 Animações (JavaScript)
+
+A dock nativa **não tem** magnificação — o dash-to-dock não implementa zoom no
+hover. O que existia era o código da extensão `macos-dock-extension`.
+
+O módulo `dock-theme/whitesur-magnification.js` foi portado para:
+
+1. encontrar a dock pronta na tela (`dashtodockContainer`);
+2. localizar a fileira de ícones;
+3. a 60 fps, ler a posição do ponteiro e interpolar a escala de cada ícone
+   (suavização 0.25, pivô na borda da tela, escala máxima 1.55).
+
+O botão de aplicativos fica travado em escala 1.0, como no macOS.
+
+Ele é conectado na extensão com um patch pequeno no `extension.js`:
 
 ```js
-_getIconActorHeight() {
-    return this._iconSize + (this._runningIndicatorsEnabled ? 6 : 0);
-}
+const __whitesurOriginalEnable = ZorinDashExtension.prototype.enable;
+const __whitesurOriginalDisable = ZorinDashExtension.prototype.disable;
 ```
 
-A altura da barra caiu de 72px para **62px**, com os vãos agora simétricos
-(4px/4px). Se os indicadores de apps rodando forem desativados, a altura
-acompanha automaticamente (48px), sem espaço morto.
+#### 4.3 Preferências nativas ajustadas
 
-Arquivos: `lib/iconManager.js` (3 pontos) e `lib/dockManager.js` (`_dockHeight`).
+| Chave | Valor | Efeito |
+|---|---|---|
+| `apply-custom-theme` | `true` | A extensão usa o `stylesheet.css` (o nosso) em vez do estilo do shell |
+| `custom-theme-shrink` | `false` | Dock em tamanho cheio, sem encolher |
+| `running-indicator-style` | `DOTS` | Indicador de app em execução no formato de ponto |
+| `custom-theme-running-dots-color` | `#ffffff` | Cor do ponto |
+| `custom-theme-running-dots-border-width` | `0` | Sem borda no ponto |
+| `animation-time` | `0.25` | Animação de mostrar/esconder a dock |
 
-#### 5.2 Botão de aplicações sem magnificação
+Chaves que não existirem na versão instalada são ignoradas: o script consulta
+`gsettings list-keys` antes de alterar qualquer coisa.
 
-**Problema:** o primeiro ícone (grade de aplicações) crescia junto com os
-demais ao passar o mouse, o que deslocava a fileira inteira e descaracterizava
-um lançador fixo.
+#### 4.4 Backup e como desfazer
 
-**Correção:** slots com a classe `macos-dock-app-button` ficam travados em
-escala 1.0, mas **continuam** reagindo a hover, tooltip e clique.
+Antes de qualquer alteração, o script guarda o estado original em:
 
-```js
-const NO_MAGNIFICATION_STYLE_CLASSES = ["macos-dock-app-button"];
-
-_canMagnify(actor) {
-    return !NO_MAGNIFICATION_STYLE_CLASSES.some(styleClass =>
-        actor.has_style_class_name(styleClass)
-    );
-}
+```
+~/.local/share/whitesur-custom/backups/dock/<nome-da-extensão>/
+├── manifest.txt          # caminho da extensão + data
+├── stylesheet.css.orig   # stylesheet original
+├── extension.js.orig     # extension.js original
+└── gsettings.txt         # valores anteriores das preferências
 ```
 
-A identificação é **por classe de estilo, não por posição** — então funciona
-mesmo se você mover o botão de aplicações para o fim da dock
-(`show-applications-button-position`).
+Para desfazer:
 
-Arquivo: `lib/magnification.js`.
+```bash
+./dock-theme/restore.sh
+```
 
-#### Como reaplicar após atualizar a dock
+O `restore.sh` remove o bloco que o pacote adicionou (preservando
+atualizações do Zorin) e, se preciso, devolve o arquivo original do backup.
+As preferências também voltam ao valor anterior.
 
-Os dois ajustes estão em `macos-dock-extension/` (build pronto) e o diff
-original em `macos-dock-extension/patches.patch`. Basta:
+O `./install.sh --uninstall` faz a mesma restauração, junto com a remoção do
+tema e dos ícones.
+
+#### Reaplicar após atualizar o Zorin
+
+Atualizações do sistema podem sobrescrever o `stylesheet.css` e o
+`extension.js` da extensão. Basta rodar de novo:
 
 ```bash
 ./install.sh --dock
 ```
 
-Isso substitui os arquivos da extensão pela versão corrigida, mantendo suas
-preferências.
+E sair/entar na sessão — no Wayland, `Alt+F2 → r` não recarrega o shell, e os
+módulos ES do GNOME ficam em cache mesmo depois de desabilitar/habilitar a
+extensão.
 
-Para atualizar o patch no futuro, veja `macos-dock-extension/README.md`.
+### 5. Super abre a grade de aplicativos
+
+Em vez das **Atividades**, a tecla **Super** passa a abrir a **grade de
+aplicativos**.
+
+**Por que não dá para resolver só com `gsettings`:** o shell registra a tecla
+Super com o keybinding `toggle-overview`, cujo handler é fixo no código do
+GNOME Shell (`js/ui/overview.js`):
+
+```js
+Main.wm.addKeybinding(
+    'toggle-overview',
+    new Gio.Settings({schema_id: 'org.gnome.desktop.wm.keybindings'}),
+    Meta.KeyBindingFlags.IGNORE_AUTOREPEAT,
+    Shell.ActionMode.NORMAL | Shell.ActionMode.OVERVIEW,
+    this.toggle.bind(this));      // ← toggle() sempre abre as Atividades
+```
+
+A grade de aplicativos é outro estado do overview (`Overview.showApps()`), que
+só existe em código — nenhuma chave de `gsettings` troca esse comportamento.
+
+**Solução:** a extensão `super-app-grid/` remove o handler original e
+registra o mesmo keybinding com um handler próprio:
+
+| Situação | Antes | Depois |
+|---|---|---|
+| Super (overview fechado) | Atividades | **grade de aplicativos** |
+| Super (overview aberto) | fecha | fecha |
+
+O mesmo vale para o **botão "Atividades"** do painel superior, que pode ser
+desligado com:
+
+```bash
+gsettings set org.gnome.shell.extensions.super-app-grid override-activities-button false
+```
+
+Ao desabilitar a extensão em Extensões, o comportamento original (Atividades)
+volta automaticamente.
+
+```bash
+./install.sh --super
+```
 
 ---
 
@@ -255,7 +341,8 @@ Para atualizar o patch no futuro, veja `macos-dock-extension/README.md`.
 
 ```
 WhiteSur-custom/
-├── install.sh                 # instalador único (tema + ícones + dock + Blur)
+├── install.sh                 # instalador único (tema + ícones + dock)
+├── LICENSE                    # licenças de todos os componentes
 ├── README.md                  # este arquivo
 ├── gtk-theme/                 # WhiteSur GTK Theme (com os ajustes)
 │   ├── install.sh
@@ -270,7 +357,19 @@ WhiteSur-custom/
 │   ├── bold/
 │   ├── alternative/
 │   └── plasma/
-└── macos-dock-extension/      # extensão MacOS Dock (build corrigido)
+├── dock-theme/                # tema macOS para a dock nativa do Zorin
+│   ├── stylesheet.css         # o visual (portado da extensão antiga)
+│   ├── whitesur-magnification.js  # a animação de zoom no hover
+│   ├── apply.sh               # aplica (com backup)
+│   ├── restore.sh             # desfaz
+│   ├── LICENSE                # MIT, com os créditos da obra original
+│   └── README.md
+├── super-app-grid/            # extensão que troca o comportamento do Super
+│   ├── metadata.json
+│   ├── extension.js
+│   ├── schemas/
+│   └── README.md
+└── macos-dock-extension/      # referência: a extensão antiga, não é instalada
     ├── README.md              # como surgiu o patch e como atualizá-lo
     ├── patches.patch          # diff contra o upstream
     ├── metadata.json
@@ -281,8 +380,10 @@ WhiteSur-custom/
     └── schemas/
 ```
 
-Cada subpasta mantém o `install.sh` original do projeto, então é possível usá-las
-individualmente ou com as opções nativas de cada instalador.
+A pasta `macos-dock-extension/` **não é mais instalada** — ela fica no
+repositório apenas como referência do visual e das animações que foram
+portados para `dock-theme/`. O `install.sh` remove a extensão da máquina, caso
+ela esteja instalada de versões anteriores do pacote.
 
 ---
 
@@ -292,17 +393,41 @@ individualmente ou com as opções nativas de cada instalador.
 |---|---|
 | Distribuição | Zorin OS 18.1 |
 | GNOME Shell | 46.0 (Wayland) |
-| Blur my Shell | 78 |
 
 ---
 
 ## Créditos e licença
 
+Este repositório é um pacote agregador: cada componente tem sua própria
+licença, preservada na pasta correspondente. O mapa completo está no
+[`LICENSE`](LICENSE) da raiz.
+
+| Componente | Projeto | Licença | Arquivo |
+|---|---|---|---|
+| `gtk-theme/` | WhiteSur GTK Theme — Vince Liuice | MIT | `gtk-theme/COPYING` |
+| `icon-theme/` | WhiteSur Icon Theme — Vince Liuice | GPL-3.0 | `icon-theme/COPYING` |
+| `macos-dock-extension/` | MacOS Dock — vinnytherobot | MIT | `macos-dock-extension/LICENSE` |
+| `dock-theme/` | MacOS Dock (port) — vinnytherobot | MIT | `dock-theme/LICENSE` |
+| `super-app-grid/` | WhiteSur Custom (código próprio) | MIT | `LICENSE` |
+| `install.sh` | WhiteSur Custom (código próprio) | MIT | `LICENSE` |
+
+As licenças originais estão preservadas e os cabeçalhos de copyright foram
+mantidos nos arquivos derivados — inclusive nos de `dock-theme/`, que são
+portas da extensão MacOS Dock.
+
+> Como o pacote inclui `icon-theme/` (GPL-3.0), a **distribuição agregada**
+> observa os termos da GPL-3.0; as partes MIT permanecem MIT para seus
+> autores originais.
+
+Créditos:
+
 - **WhiteSur GTK Theme** — Vince Liuice —
   [vinceliuice/WhiteSur-gtk-theme](https://github.com/vinceliuice/WhiteSur-gtk-theme) — MIT
 - **WhiteSur Icon Theme** — Vince Liuice —
   [vinceliuice/WhiteSur-icon-theme](https://github.com/vinceliuice/WhiteSur-icon-theme) — GPL-3.0
-
-As licenças originais estão preservadas em `gtk-theme/COPYING` e
-`icon-theme/COPYING`. Os ajustes deste pacote seguem a mesma licença de cada
-projeto de origem.
+- **MacOS Dock** — vinnytherobot —
+  [vinnytherobot/MacOSDock](https://github.com/vinnytherobot/MacOSDock) — MIT
+- **dash-to-dock** — micheleg —
+  [micheleg/dash-to-dock](https://github.com/micheleg/dash-to-dock) — GPL-2.0+
+  (as folhas de estilo da dock adaptadas já vêm no upstream do WhiteSur, em
+  `gtk-theme/other/dash-to-dock/`)

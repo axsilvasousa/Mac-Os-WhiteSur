@@ -1,5 +1,17 @@
 # MacOS Dock — build corrigido
 
+> **Esta pasta não é mais instalada.** O pacote agora usa a **dock nativa do
+> Zorin OS** (Zorin Dash) e aplica nela o visual e as animações que estão
+> aqui. O código abaixo fica apenas como **referência** do visual original.
+>
+> - O CSS foi portado para os seletores da dock nativa em
+>   [`dock-theme/stylesheet.css`](../dock-theme/stylesheet.css).
+> - A animação de magnificação (zoom no hover) foi portada para
+>   [`dock-theme/whitesur-magnification.js`](../dock-theme/whitesur-magnification.js).
+>
+> O `install.sh` remove a extensão desta pasta da máquina, caso ela esteja
+> instalada de versões anteriores do pacote.
+
 Extensão [MacOS Dock](https://github.com/vinnytherobot/MacOSDock) de
 `vinnytherobot`, vendorizada neste repositório **já compilada e com os ajustes
 aplicados**. Assim, `./install.sh` instala a dock pronta, sem depender de

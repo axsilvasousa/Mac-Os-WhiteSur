@@ -30,6 +30,8 @@ cat << EOF
     -n, --name NAME         Specify theme name (Default: $THEME_NAME)
     -t, --theme VARIANT     Specify theme color variant(s) [default|purple|pink|red|orange|yellow|green|grey|nord|all] (Default: blue)
     -a, --alternative       Install alternative icons for software center and file-manager
+    -A, --alternative-apps  Install alternative icons for apps only
+                            (keeps the macOS-style folder/places icons)
     -b, --bold              Install bolder panel icons version (1.5px size)
     -p, --kde-plasma        Replaces Apple logo with KDE Plasma logo.
 
@@ -78,6 +80,8 @@ install() {
 
     if [[ ${alternative:-} == 'true' ]]; then
       cp -r "${SRC_DIR}"/alternative/*                                                       "${THEME_DIR}"
+    elif [[ ${alternative_apps:-} == 'true' ]]; then
+      cp -r "${SRC_DIR}"/alternative/apps/*                                                  "${THEME_DIR}"/apps
     fi
 
     if [[ ${plasma:-} == 'true' ]]; then
@@ -141,6 +145,8 @@ install() {
     if [[ ${alternative:-} == 'true' ]]; then
       cp -r "${SRC_DIR}"/alternative/apps/symbolic/*.svg                                     "${THEME_DIR}"/apps/symbolic
       cp -r "${SRC_DIR}"/alternative/places/scalable/*.svg                                   "${THEME_DIR}"/places/scalable
+    elif [[ ${alternative_apps:-} == 'true' ]]; then
+      cp -r "${SRC_DIR}"/alternative/apps/symbolic/*.svg                                     "${THEME_DIR}"/apps/symbolic
     fi
 
     if [[ ${plasma:-} == 'true' ]]; then
@@ -238,6 +244,11 @@ while [[ "$#" -gt 0 ]]; do
     -a|--alternative)
       alternative='true'
       echo "Installing 'alternative' version..."
+      shift
+      ;;
+    -A|--alternative-apps)
+      alternative_apps='true'
+      echo "Installing 'alternative apps' version..."
       shift
       ;;
     -b|--bold)

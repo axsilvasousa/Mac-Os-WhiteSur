@@ -4,7 +4,7 @@
    height="64"
    version="1.1"
    id="svg2"
-   sodipodi:docname="app-template-blue.svg"
+   sodipodi:docname="gittyup.svg"
    inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -67,7 +67,7 @@
      ry="13"
      fill="url(#linearGradient862-5)"
      id="rect2"
-     style="fill:url(#linearGradient862-5);stroke:#193549;stroke-width:2;stroke-dasharray:none;stroke-opacity:1" /><g
+     style="fill:url(#linearGradient862-5);stroke:none;stroke-width:0;stroke-dasharray:none;stroke-opacity:1" /><g
      transform="matrix(0.07727352,0,0,0.07727352,-19.742212,-94.343705)"
      id="g15"><g
        transform="matrix(0.79141955,0,0,0.79141955,320.86426,1182.6991)"
@@ -159,4 +159,13 @@
        stroke-linejoin="round"
        stroke-width="25.3256"
        style="paint-order:stroke markers fill"
-       id="path14" /></g></svg>
+       id="path14" /></g><rect
+     x="4.9815922"
+     y="4.6397705"
+     width="54.036816"
+     height="54.720459"
+     rx="11.944224"
+     ry="11.999346"
+     fill="url(#linearGradient862-3)"
+     id="rect2-6-5"
+     style="fill:#000000;fill-opacity:0;stroke:#193549;stroke-width:1.95964;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1" /></svg>
