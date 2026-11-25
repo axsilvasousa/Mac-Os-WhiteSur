@@ -138,8 +138,7 @@ icon="${ICON_VARIANTS[0]}"
 sidebar_size="${SIDEBAR_SIZE_VARIANTS[0]}"
 panel_opacity="${PANEL_OPACITY_VARIANTS[0]}"
 panel_size="${PANEL_SIZE_VARIANTS[0]}"
-# Estilo do Nautilus usado e validado neste pacote (o padrão upstream é 'stable')
-nautilus_style="mojave"
+nautilus_style="${NAUTILUS_STYLE_VARIANTS[0]}"
 background="blank"
 compact="true"
 
